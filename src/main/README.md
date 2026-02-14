@@ -56,3 +56,19 @@ patterns/ — StudentFactory.java, LogSingleton.java
 repository/ — StudentRepository.java
 
 service/ — StudentService.java
+
+
+Bonus Task: In-Memory Caching Layer
+
+The main goal of this task was to boost the application's performance. I implemented a simple in-memory caching mechanism to handle frequently accessed data more efficiently.
+
+How I built it:
+I used the Singleton pattern for the StudentCache class to make sure there’s only one cache instance running across the whole app. For storage, I went with a ConcurrentHashMap using a Key-Value structure, where the key is the request type and the value is the list of students. To keep the data consistent, I set up an invalidation rule: whenever the createStudent method is called, the cache clears itself automatically. This way, we don't end up showing outdated information after a new student is added.
+
+How to verify:
+First, go to http://localhost:8080/api/students. The first time, it pulls data from the database, and you’ll see "[LOG]: CACHE MISS" in the console. If you refresh the page, the data loads instantly from memory, and the log will show "[LOG]: CACHE HIT." If you add a new student, the log will say the cache is cleared, and the next request will be a miss again while it updates.
+
+Design Principles:
+I followed SOLID principles here. The StudentCache class has a Single Responsibility—it only manages data storage and retrieval. Also, because of the layered architecture, all the caching logic is tucked away in the Service layer, so it doesn't mess with the Controller or Repository logic.
+
+![Evidence of Caching](docs/screenshots/bonustask.png)
